@@ -2,7 +2,7 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Date: Jan 31, 2016
-**   Updated: Feb 5, 2016
+**   Updated: March 22, 2016
 
 ** SET DIRECTORIES **
 
@@ -12,7 +12,7 @@
 *  must be run each time Stata is opened
 	/* Choose the project path location to where you want the project parent 
 	   folder to go on your machine. Make sure it ends with a forward slash */
-	global projectpath "/Users/Aaron/Desktop/"
+	global projectpath "C:\Users\achafetz\Documents\GitHub\"
 	cd "$projectpath"
 	
 * Run a macro to set up study folder
@@ -44,10 +44,10 @@
 *Set up global file paths located within project path
 	*these folders must exist in the parent folder
 	global projectpath `c(pwd)'
-	global data "$projectpath/RawData/"
-	global output "$projectpath/StataOutput/"
-	global graph "$projectpath/StataFigures/"
-	global excel "$projectpath/ExcelOutput/"
+	global data "$projectpath/RawData"
+	global output "$projectpath/StataOutput"
+	global graph "$projectpath/StataFigures"
+	global excel "$projectpath/ExcelOutput"
 	disp as error "If initial setup, move data to RawData folder."
 
 ********************************************************************************
