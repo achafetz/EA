@@ -1,13 +1,15 @@
 **   EA Outlier Analysis
 **   COP FY16
 **   Aaron Chafetz
+**   Purpose: import EA raw data files and program area names
 **   Date: Jan 31, 2016
 **   Updated: Feb 5, 2016
 
 
-*** EA DATA ***
+** EA DATA **
 
 	*import and save EA Data
+		*note: all raw data file should be saved as ctry.xlsx
 		local files : dir "$data/" files "*.xlsx"
 		foreach file in `files' {
 			capture confirm file "$output/`=regexr("`file'",".xlsx","")'_datanav.dta"
@@ -17,14 +19,13 @@
 				}
 			}
 			
-*** PROGRAM AREA INFORMATION ***
-
-	*import program categories and areas for outlier analysis tab
-		import excel "areas.xlsx", firstrow clear
-		save areas.dta, replace
+** PROGRAM AREA INFORMATION **
 
 	*import data validation info
-		import excel "$data/Malawi", sheet("Validations") cellrange(N1:S37) clear
+		/*note: only need to import once for one country you are using; adjust 
+			country after the backslash if using a diff country */
+		import excel "$data/Malawi", ///
+			sheet("Validations") cellrange(N1:S37) clear
 		rename (N O P Q) (pg_name ben_type pg_ue_name pg_ben_name)
 			lab var pg_name "Program Area Name"
 			lab var ben_type "Type of Beneficiary"
@@ -39,4 +40,4 @@
 		drop if pa_area==""
 		lab var pa_area "Program Area"
 		lab var pg_name "Unit Expenditure Label/Indicator
-		save datanav_val.dta, replace
+		save "$output/datanav_val.dta", replace

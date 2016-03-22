@@ -1,16 +1,16 @@
 **   EA Outlier Analysis
 **   COP FY16
 **   Aaron Chafetz
+**   Purpose: identify UE outliers by program area
 **   Date: Jan 31, 2016
 **   Updated: March 22, 2016
-
 
 
 * close out any open log files
 	capture confirm log close
 		if !_rc log close
 			
-*define set of countries to analyze
+*define set of countries to analyze (must match .dta file names)
 	foreach ctry in Tanzania{
 	
 	// OUTLIER ANALYSIS //

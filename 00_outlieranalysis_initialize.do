@@ -1,6 +1,8 @@
 **   EA Outlier Analysis
 **   COP FY16
 **   Aaron Chafetz
+**   Purpose: Initialize folder structure and global file paths
+**   Adapted from Tim Essam, USAID
 **   Date: Jan 31, 2016
 **   Updated: March 22, 2016
 
