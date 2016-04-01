@@ -1,7 +1,7 @@
 ### PEPFAR EA - Outlier Analysis
 
 #### Overview
-This set of Stata do files provides both a program area summary and detailed mechanism information necessary for Unit Expenditure outliers using PEPFAR Expenditure Analysis data.
+This set of Stata do files provides both a program area summary and detailed mechanism information necessary for Unit Expenditure outliers using PEPFAR Expenditure Analysis 2015 data.
 
 Notes
    - This repository contains code only; raw data (in xlsx format) should be loaded onto the local machines in the `RawData` folder
