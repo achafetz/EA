@@ -30,5 +30,20 @@
 	use "$output\temp_fbcts", clear
 	append using "$output\temp_pmtct_wom_tst.dta" "$output\temp_htc.dta" ///
 		"$output\temp_htc_pos.dta" "$output\temp_oth_ind.dta"
+*clean up - remove unnecessary variables
+	drop countryname psnu psnuuid disaggregate age otherdisaggregate ///
+		resultstatus indicator
+*aggregate DSD/TA & PSNU
+	*EA does not differentiate between DSD and TA
+	*expenditure data not down to PSNU level --> no prioritizations
+	*also removes extra variables - countryname psnu psnuuid disaggregate age otherdisaggregate resultstatus indicator
+	collapse (sum) fy2016_targets fy2016sapr, by(operatingunit snu1 ///
+		primepartner fundingagency mechanismid implementingmechanismname ///
+		exp_ind)
+
+*merge with EA
+
+*** TO DO ***
+
 *save
 	

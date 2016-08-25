@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import EA data & run outlier analysis
 **   Date: August 24, 2016
-**   Updated:
+**   Updated: 8/25
 
 /* NOTES
 	- Data source: 2012-2015 Nigeria SAS Output 01FEB16 [PEPFAR.net]
@@ -55,25 +55,59 @@
 	*reshape
 		reshape long @_ben @_ue, i(yr_agency_promisid_snu) j(type, string) 
 		rename _ben ben
+			lab var ben "Beneficiaries"
 		rename _ue ue
+			lab var ue "Unit Expenditure"
 	*drop if rows have no data
 		egen rmax = rmax(ben ue)
 		drop if rmax==0
 		drop rmax
-		
-	*sum up all expenditures
+
+*OUTLIERS		
+	*idenfity outliers
 		local ol 5 //set outlier level (default 5x Weight Avg UE)
-		sort type
-		by type: egen tot_exp = total(ue*ben) //total expenditures in prog area
-		by type: egen tot_ben = total(ben) // total beneficiaries in prog area
-		by type: gen wa_ue = tot_exp/tot_ben // weighted average UE
-		by type: gen wa_ue_ol = wa_ue * `ol' // UE outlier threshold (high)
+		gen exp = ue*ben // mechanism expenditures for that prog area
+			lab var exp "Expenditures"
+		bysort type: egen tot_exp = total(ue*ben) //total expenditures in prog area
+		bysort type: egen tot_ben = total(ben) // total beneficiaries in prog area
+		bysort type: gen wa_ue = tot_exp/tot_ben // weighted average UE
+			lab var wa_ue "Weighted Avg UE"
+		bysort type: gen wa_ue_ol = wa_ue * `ol' // UE outlier threshold (high)
 		*by type: gen wa_ue_ol_low = wa_ue / `ol' // UE outlier threshold (low; not manditory)
 		by type: gen outlier = 0 //identify outliers
-			replace outlier = 1 if ue>wa_ue_out & ue!=.
-			replace outlier = 1 if ue<wa_ue_out_low //can remove; not manditory
+			replace outlier = 1 if ue>wa_ue_ol & ue!=.
+			lab var outlier "Outlier (`ol'x Weighted Avg UE)"
+			*replace outlier = 1 if ue<wa_ue_ol_low //can remove; not manditory
 			lab def yn 0 "No" 1 "Yes"
 			lab val outlier yn
-	
+		drop tot* wa_ue_ol //only needed to create outlier
+		
+*CLEAN UP	
 	*rename each type to align w/ EA exp indicator
+		preserve // preserve current file while creating a crosswalk table on the side
+		clear
+		input str14 (type exp_ind) //crosswalk table
+			"art" "FBCTS"
+			"htc_umb_tst" "HTC_TST"
+			"htc_umb_tstpos" "HTC_POS"
+			"inf_care" "PMTCT_INF_TX"
+			"inf_test" "PMTCT_INF_TST"
+			"ovc_umb" "OVC"
+			"pw_care" "PMTCT_WOM_TX"
+			"pw_test" "PMTCT_WOM_TST"
+			"sorpc" "KP_FSW"
+			"sorpi" "KP_PWID"
+			"sorpm" "KP_MSMTG"
+			end
+		tempfile temp_cw //create a temporary file for saving the crosswalk table
+		save "`temp_cw'"
+		restore // restore the EA data
+		merge m:1 type using "`temp_cw'", nogen //merge in crosswalk table
+	*cleanup for merging
+		drop yr_agency_promisid_snu-mech_name national_sub_sub_unit mech_promis_id ben
+		order exp_ind, before(ue)
+		rename national_sub_unit snu1
+		rename mech_hq_id mechanismid
+	
 	*save
+		save "$output\temp_eadata.dta", replace	
