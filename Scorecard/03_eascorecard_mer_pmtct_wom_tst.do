@@ -2,7 +2,7 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with PMTCT Women Tested Program Area
-**   Date: August 24, 2016
+**   Date: August 25, 2016
 **   Updated: 
 
 
@@ -50,7 +50,7 @@
 		reshape wide value, i(id) j(type, string) 
 	
 	*add expenditure indicator
-		replace exp_ind="PMTCT_WOM_TST" if indicator=="PMTCT_WOM_TST_EA"
+		replace exp_ind="PMTCT_WOM_TST" if disaggregate=="PMTCT_WOM_TST_EA"
 		
 	*clean up
 		drop id

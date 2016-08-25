@@ -108,6 +108,7 @@
 		order exp_ind, before(ue)
 		rename national_sub_unit snu1
 		rename mech_hq_id mechanismid
+		replace snu1="FCT" if snu1=="Abuja Federal Capital Territory"
 	
 	*save
 		save "$output\temp_eadata.dta", replace	

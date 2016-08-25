@@ -2,13 +2,13 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: calculate indicator associated with HTC_TST_POS Program Area
-**   Date: August 24, 2016
-**   Updated: 
+**   Date: August 25, 2016
+**   Updated: 8/26/16
 
 /*
-| EA Program Area            | Expenditure indicators | SI Indicators                                                                         |
-|----------------------------|------------------------|---------------------------------------------------------------------------------------|
-| HIV Testing and Counseling | HTC Positive           | [HTC_TSTPOS - (PMTCT_ARV denominator +  PMTCT_EID disaggregate + VMMC_CIRC positive)] |
+| EA Program Area            | Expenditure indicators | SI Indicators                                               |
+|----------------------------|------------------------|-------------------------------------------------------------|
+| HIV Testing and Counseling | HTC Positive           | [HTC_TSTPOS - (PMTCT_ARV denominator + VMMC_CIRC positive)] |
 */
 
 	*open datafile
@@ -17,7 +17,6 @@
 		keep if ///
 			(indicator=="HTC_TST" & disaggregate=="Results" & resultstatus=="Positive") | ///
 			(indicator=="PMTCT_ARV" & disaggregate=="Total Denominator") | ///
-			indicator=="PMTCT_EID_POS_12MO"  | ///
 			(indicator=="VMMC_CIRC" & disaggregate=="HIVStatus" & resultstatus=="Positive")
 			
 	*reshape long
@@ -37,10 +36,10 @@
 		recode `r(varlist)' (.=0)
 		capture confirm variable valueVMMC_CIRC //if VMMC doesn't exist, remove it from equation
 			if !_rc{
-				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valuePMTCT_EID_POS_12MO + valueVMMC_CIRC)
+				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valueVMMC_CIRC)
 				}
 			else{
-				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valuePMTCT_EID_POS_12MO) //no VMMC in equation
+				gen valueHTC_TST_POS_EA = valueHTC_TST - valuePMTCT_ARV //no VMMC in equation
 				}
 		*what to do w/ neg values?
 		replace valueHTC_TST_POS_EA = . if valueHTC_TST_POS_EA<0

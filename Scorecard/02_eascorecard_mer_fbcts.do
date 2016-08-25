@@ -2,7 +2,7 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with FBCTS Program Area
-**   Date: August 24, 2016
+**   Date: August 25, 2016
 **   Updated: 
 
 
@@ -13,6 +13,7 @@
 */
 	*open datafile
 		use "$output\temp_setup", clear
+		
 	*remove extra variables
 		keep if ///
 			(indicator=="TX_CURR" & disaggregate=="Age/Sex" & age!="<01") | ///
