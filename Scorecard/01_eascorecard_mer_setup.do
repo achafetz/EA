@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Initialize data structure
 **   Date: August 24, 2016
-**   Updated: 8/25/16
+**   Updated: 8/29/16
 
 /* NOTES
 	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160802 [Data Hub]
@@ -31,10 +31,15 @@
 
 *SETUP
 
-	*import data
-		import delimited "$data\PSNU_IM_20160802.txt", clear
-		save "$output\ICPIFactView_SNUbyIM.dta", replace
-		use "$output\ICPIFactView_SNUbyIM.dta", clear
+	*import/use data
+		capture confirm file "$output\ICPIFactView_SNUbyIM.dta"
+			if !_rc{
+				use "$output\ICPIFactView_SNUbyIM.dta", clear
+			}
+			else{
+				import delimited "$data\PSNU_IM_20160802.txt", clear
+				save "$output\ICPIFactView_SNUbyIM.dta", replace
+			}
 
 	*create dataset for just Niergia
 		keep if operatingunit=="Nigeria"
@@ -51,7 +56,7 @@
 	*drop unnecessary columns
 		drop ïregion regionuid operatingunituid mechanismuid typemilitary ///
 			numeratordenom categoryoptioncomboname sex ///
-			coarsedisaggregate fy2015q2 fy2015q3 fy2015q4 fy2015apr fy2016q1 ///
+			coarsedisaggregate fy2015q2 fy2015q3 fy2015q4 fy2016q1 ///
 			fy2016q2
 	*create a variable for EA expenditure indicator names
 		gen str9 exp_ind = "."

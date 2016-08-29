@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: merge MER indicators together
 **   Date: August 25, 2016
-**   Updated: 8/26/16
+**   Updated: 8/29/16
 
 /* NOTES
 	
@@ -42,12 +42,16 @@
 		primepartner fundingagency mechanismid implementingmechanismname ///
 		exp_ind)
 
-*merge with EA
+*merge with EA 2015 data
 	merge 1:1 mechanismid snu1 exp_ind using "$output\temp_eadata.dta"
 	*check 
 	tab _merge if  _merge!=3
-	tab _merge if !inlist(snu1, "Kebbi", "Kwara",	"Niger",	"Zamfara",	"National") & _merge!=3 //non matching SNUs
-
-
+	tab _merge if !inlist(snu1, "Kebbi", "Kwara",	"Niger",	"Zamfara",	"National") & _merge!=3 & primepartner!="Dedup" & fy2016_targets!=0 & fy2016sapr!=0 //non matching SNUs
+	drop if primepartner=="Dedup"
+	drop _merge
+*merge with EA Pilot SAPR data
+	merge 1:1 mechanismid snu1 exp_ind using "$output\temp_eadata_sapr.dta"
+	drop _merge
 *save
+	save "$output\temp_merge.dta", replace
 	

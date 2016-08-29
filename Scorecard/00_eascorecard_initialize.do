@@ -2,7 +2,7 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: Initialize folder structure and global file paths
-**   Adapted from Tim Essam, USAID
+**   Initialize file adapted from Tim Essam, USAID
 **   Date: August 24, 2016
 **   Updated: 
 

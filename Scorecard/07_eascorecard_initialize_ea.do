@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import EA data & run outlier analysis
 **   Date: August 24, 2016
-**   Updated: 8/25
+**   Updated: 8/29
 
 /* NOTES
 	- Data source: 2012-2015 Nigeria SAS Output 01FEB16 [PEPFAR.net]
@@ -31,9 +31,14 @@
 *SETUP
 
 	*import data
-		import delimited "$data\2012-2015 Nigeria SAS Output 01FEB16.csv", clear
-		save "$output\nigeria_ea.dta", replace
-		use "$output\nigeria_ea.dta", clear
+		capture confirm file "$output\nigeria_ea.dta"
+			if !_rc{
+				use "$output\nigeria_ea.dta", clear
+			}
+			else{
+				import delimited "$data\2012-2015 Nigeria SAS Output 01FEB16.csv", clear
+				save "$output\nigeria_ea.dta", replace
+			}
 
 	*clean up dataset
 		keep if rptgcycle==2015
@@ -45,13 +50,12 @@
 			htc_umb_tst htc_umb_tstpos_ue htc_umb_tstpos ovc_umb_ue ///
 			ovc_umb_ben sorpi_ue sorpi_ben sorpc_ue sorpc_ben sorpm_ue sorpm_ben
 	*rename for uniformity (for reshaping)
-		rename art_py art_ben
-		rename pw_test pw_test_ben
-		rename pw_care pw_care_ben
-		rename inf_test inf_test_ben
-		rename inf_care inf_care_ben
-		rename htc_umb_tst htc_umb_tst_ben
-		rename htc_umb_tstpos htc_umb_tstpos_ben
+		foreach v in art_py pw_test pw_care inf_test inf_care ///
+			htc_umb_tst htc_umb_tstpos {
+			rename `v' `v'_ben
+			}
+			*end
+		rename art_py_ben art_ben //match w/ ue
 	*reshape
 		reshape long @_ben @_ue, i(yr_agency_promisid_snu) j(type, string) 
 		rename _ben ben
@@ -60,7 +64,7 @@
 			lab var ue "Unit Expenditure"
 	*drop if rows have no data
 		egen rmax = rmax(ben ue)
-		drop if rmax==0
+		drop if inlist(rmax, ., 0)
 		drop rmax
 
 *OUTLIERS		
@@ -109,6 +113,10 @@
 		rename national_sub_unit snu1
 		rename mech_hq_id mechanismid
 		replace snu1="FCT" if snu1=="Abuja Federal Capital Territory"
-	
+	*rename ea variables
+		foreach v of varlist ue-outlier{
+			rename `v' fy2015apr_ea_`v'
+		}
+		*end
 	*save
 		save "$output\temp_eadata.dta", replace	
