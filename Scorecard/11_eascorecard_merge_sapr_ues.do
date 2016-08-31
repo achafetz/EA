@@ -47,6 +47,6 @@
 *remove temporary files
 	fs "$output\temp*.dta"
 	foreach f in `r(files)'{
-		erase `f'
+		erase "$output/`f'"
 		}
 		*end
