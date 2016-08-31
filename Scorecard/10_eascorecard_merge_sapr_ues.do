@@ -1,9 +1,9 @@
 **   EA Scorecard
 **   COP FY16
 **   Aaron Chafetz
-**   Purpose: genereate SAPR Unit Expednitures
+**   Purpose: genereate SAPR Unit Expenditures
 **   Date: August 29, 2016
-**   Updated:
+**   Updated:8/31/16
 
 
 *open
