@@ -3,9 +3,13 @@
 **   Aaron Chafetz
 **   Purpose: calculate indicator associated with HTC_TST_POS Program Area
 **   Date: August 25, 2016
-**   Updated: 8/26/16
+**   Updated: 8/31/16
 
 /*
+| EA Program Area            | Expenditure indicators | SI Indicators                                                                                                                                                       |
+|----------------------------|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| HIV Testing and Counseling | HTC Positive           | [HTC_TSTPOS (results, positive) - ((PMTCT_ARV (total denominator) + VMMC_CIRC positive + PMTCT EID POS_2MO(total numerator) + PMTCT EID POS_12MO(total numerator))] |
+MER 2.0
 | EA Program Area            | Expenditure indicators | SI Indicators                                               |
 |----------------------------|------------------------|-------------------------------------------------------------|
 | HIV Testing and Counseling | HTC Positive           | [HTC_TSTPOS - (PMTCT_ARV denominator + VMMC_CIRC positive)] |
@@ -17,7 +21,8 @@
 		keep if ///
 			(indicator=="HTC_TST" & disaggregate=="Results" & resultstatus=="Positive") | ///
 			(indicator=="PMTCT_ARV" & disaggregate=="Total Denominator") | ///
-			(indicator=="VMMC_CIRC" & disaggregate=="HIVStatus" & resultstatus=="Positive")
+			(indicator=="VMMC_CIRC" & disaggregate=="HIVStatus" & resultstatus=="Positive") | ///
+			inlist(indicator, "PMTCT_EID_POS_12MO", "PMTCT_EID_POS_2MO")
 			
 	*reshape long
 		gen id = _n //need a unique id for reshape
@@ -36,10 +41,10 @@
 		recode `r(varlist)' (.=0)
 		capture confirm variable valueVMMC_CIRC //if VMMC doesn't exist, remove it from equation
 			if !_rc{
-				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valueVMMC_CIRC)
+				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valueVMMC_CIRC + valuePMTCT_EID_POS_12MO + valuePMTCT_EID_POS_2MO)
 				}
 			else{
-				gen valueHTC_TST_POS_EA = valueHTC_TST - valuePMTCT_ARV //no VMMC in equation
+				gen valueHTC_TST_POS_EA = valueHTC_TST - (valuePMTCT_ARV + valuePMTCT_EID_POS_12MO + valuePMTCT_EID_POS_2MO) //no VMMC in equation
 				}
 		*what to do w/ neg values?
 		replace valueHTC_TST_POS_EA = . if valueHTC_TST_POS_EA<0

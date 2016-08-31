@@ -10,22 +10,27 @@
 	- Report uses FY2016APR results since it sums up necessary values
 	- Report aggregates DSD and TA
 	
-	EA Needed to create Variable to Create (8/25)
+	EA Needed to create Variable to Create (8/31, A.Chen)
+	| EA Program Area                          | Expenditure indicators    | SI Indicators                                                                                                                                                       |
+	|------------------------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+	| Facility-based Care & Treatment Services | FBCTS                     | TX_CURR (total numerator) - PMTCT_ART (total numerator)                                                                                                             |
+	| PMTCT                                    | PMTCT- Women Tested       | PMTCT_STAT (total numerator) - PMTCT_STAT_POS (total denominator for PMTCT ART)                                                                                     |
+	| PMTCT                                    | PMTCT- Women on Treatment | PMTCT_ARV (numerator)                                                                                                                                               |
+	| PMTCT                                    | PMTCT- Infants Tested     | PMTCT_EID Numerator                                                                                                                                                 |
+	| PMTCT                                    | PMTCT- Infants on Care    | CARE_CURR <1                                                                                                                                                        |
+	| VMMC                                     | VMMC                      | VMMC_CIRC                                                                                                                                                           |
+	| HIV Testing and Counseling               | HTC Tested                | [HTC_TST - (PMTCT_STAT(total numerator)+ VMMC_CIRC tested (total numerator)[1]+PMTCT EID (total numerator))]                                                        |
+	| HIV Testing and Counseling               | HTC Positive              | [HTC_TSTPOS (results, positive) - ((PMTCT_ARV (total denominator) + VMMC_CIRC positive + PMTCT EID POS_2MO(total numerator) + PMTCT EID POS_12MO(total numerator))] |
+	| OVC                                      | OVC                       | OVC_SERV                                                                                                                                                            |
+	| Key Populations                          | KP-PWID                   | KP_PREV disaggregation of PWID                                                                                                                                      |
+	| Key Populations                          | KP-FSW                    | KP_PREV disaggregation of FSW                                                                                                                                       |
+	| Key Populations                          | KP-MSMTG                  | KP_PREV disaggregation of MSMTG                                                                                                                                     |
+	
+	HTC Calculation Changes for MER 2.0
 	| EA Program Area                          | Expenditure indicators    | SI Indicators                                                    |
 	|------------------------------------------|---------------------------|------------------------------------------------------------------|
-	| Facility-based Care & Treatment Services | FBCTS                     | TX_CURR (numerator) - PMTCT_ART (numerator)                      |
-	| PMTCT                                    | PMTCT- Women Tested       | PMTCT_STAT (numerator) - PMTCT_STAT_POS (denominator, PMTCT ART) |
-	| PMTCT                                    | PMTCT- Women on Treatment | PMTCT_ARV (numerator)                                            |
-	| PMTCT                                    | PMTCT- Infants Tested     | PMTCT_EID Numerator                                              |
-	| PMTCT                                    | PMTCT- Infants on Care    | CARE_CURR <1                                                     |
-	| VMMC                                     | VMMC                      | VMMC_CIRC                                                        |
 	| HIV Testing and Counseling               | HTC Tested                | [HTC_TST - (PMTCT_STAT+ VMMC_CIRC tested)]                       |
 	| HIV Testing and Counseling               | HTC Positive              | [HTC_TSTPOS - (PMTCT_ARV denominator + VMMC_CIRC positive)]      |
-	| OVC                                      | OVC                       | OVC_SERV                                                         |
-	| Key Populations                          | KP-PWID                   | KP_PREV disaggregation of PWID                                   |
-	| Key Populations                          | KP-FSW                    | KP_PREV disaggregation of FSW                                    |
-	| Key Populations                          | KP-MSMTG                  | KP_PREV disaggregation of MSMTG                                  |
-
 */
 ********************************************************************************
 
@@ -56,7 +61,7 @@
 	*drop unnecessary columns
 		drop ïregion regionuid operatingunituid mechanismuid typemilitary ///
 			numeratordenom categoryoptioncomboname sex ///
-			coarsedisaggregate fy2015q2 fy2015q3 fy2015q4 fy2016q1 ///
+			coarsedisaggregate fy2015q2 fy2015q3 fy2015q4 fy2015apr fy2016q1 ///
 			fy2016q2
 	*create a variable for EA expenditure indicator names
 		gen str9 exp_ind = "."
