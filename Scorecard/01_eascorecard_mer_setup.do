@@ -3,11 +3,10 @@
 **   Aaron Chafetz
 **   Purpose: Initialize data structure
 **   Date: August 24, 2016
-**   Updated: 8/29/16
+**   Updated: 9/13/16
 
 /* NOTES
-	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160802 [Data Hub]
-	- Report uses FY2016APR results since it sums up necessary values
+	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160822 [Data Hub]
 	- Report aggregates DSD and TA
 	
 	EA Needed to create Variable to Create (8/31, A.Chen)
@@ -42,7 +41,7 @@
 				use "$output\ICPIFactView_SNUbyIM.dta", clear
 			}
 			else{
-				import delimited "$data\PSNU_IM_20160802.txt", clear
+				import delimited "$data\PSNU_IM_20160822.txt", clear
 				save "$output\ICPIFactView_SNUbyIM.dta", replace
 			}
 
@@ -61,8 +60,7 @@
 	*drop unnecessary columns
 		drop ïregion regionuid operatingunituid mechanismuid typemilitary ///
 			numeratordenom categoryoptioncomboname sex ///
-			coarsedisaggregate fy2015q2 fy2015q3 fy2015q4 fy2015apr fy2016q1 ///
-			fy2016q2
+			coarsedisaggregate fy*q*
 	*create a variable for EA expenditure indicator names
 		gen str9 exp_ind = "."
 			lab var exp_ind "EA Expenditure Indicators"

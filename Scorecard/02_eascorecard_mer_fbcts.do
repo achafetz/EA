@@ -3,10 +3,17 @@
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with FBCTS Program Area
 **   Date: August 25, 2016
-**   Updated: 
+**   Updated: 9/13/16
 
 
 /*
+Notes:
+	- FBCTS Patient Years:  Our standard calculations is (using FY16 
+		EA analysis as an example) is:  (APR15+(2xSAPR16)+APR16)/4.  
+		My suggestion would be to simply take the average of the first 2 data 
+		points:  (APR15+SAPR15)/2  -- this would account for some variation in 
+		the number of patients w/o giving too much weight to SAPR. (R.Godbole, 9/12/16)
+
 | EA Program Area                          | Expenditure indicators | SI Indicators         |
 |------------------------------------------|------------------------|-----------------------|
 | Facility-based Care & Treatment Services | FBCTS                  | [TX_CURR - PMTCT_ARV] |
@@ -20,8 +27,13 @@
 			(indicator=="PMTCT_ARV" & disaggregate=="Total Numerator")
 		
 	*aggregate all age groups together
-		collapse (sum) fy2016_targets (sum) fy2016sapr, by(operatingunit-disaggregate)
+		collapse (sum) fy2016_targets fy2015apr fy2016sapr, by(operatingunit-disaggregate)
 	
+	*replace fy2016sapr with patient year value
+		gen fy2016sapr_py = (fy2015apr+fy2016sapr)/2
+		drop fy2015apr fy2016sapr
+		rename fy2016sapr_py fy2016sapr
+		
 	*reshape long
 		gen id = _n //need a unique id for reshape
 		rename fy2016sapr fy2016_sapr //uniformity between naming conventions for stub
@@ -64,3 +76,8 @@
 	*save 
 		save "$output\temp_fbcts.dta", replace
 
+		
+** Remove fy2015apr from further datasets **
+	use "$output\temp_setup", clear
+	drop fy2015apr
+	save "$output\temp_setup", replace
