@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Initialize data structure
 **   Date: August 24, 2016
-**   Updated: 9/13/16
+**   Updated: 9/14/16
 
 /* NOTES
 	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160822 [Data Hub]
@@ -52,6 +52,7 @@
 		replace snuprioritization="[not classified]" if snuprioritization==""
 	
 	*create SAPR variable to sum up necessary variables
+		clonevar fy2015sapr = fy2015q2
 		egen fy2016sapr = rowtotal(fy2016q1 fy2016q2)
 			replace fy2016sapr = fy2016q2 if inlist(indicator, "TX_CURR", ///
 				"OVC_SERV", "PMTCT_ARV", "KP_PREV", "PP_PREV", "CARE_CURR")

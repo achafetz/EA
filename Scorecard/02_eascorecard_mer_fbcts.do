@@ -1,18 +1,15 @@
+
 **   EA Scorecard
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with FBCTS Program Area
 **   Date: August 25, 2016
-**   Updated: 9/13/16
+**   Updated: 9/14/16
 
 
 /*
 Notes:
-	- FBCTS Patient Years:  Our standard calculations is (using FY16 
-		EA analysis as an example) is:  (APR15+(2xSAPR16)+APR16)/4.  
-		My suggestion would be to simply take the average of the first 2 data 
-		points:  (APR15+SAPR15)/2  -- this would account for some variation in 
-		the number of patients w/o giving too much weight to SAPR. (R.Godbole, 9/12/16)
+	- FBCTS Patient Years for FY16 SAPR:  (SAPR15+(2xAPR15)+SAPR15)/4.  
 
 | EA Program Area                          | Expenditure indicators | SI Indicators         |
 |------------------------------------------|------------------------|-----------------------|
@@ -30,7 +27,7 @@ Notes:
 		collapse (sum) fy2016_targets fy2015apr fy2016sapr, by(operatingunit-disaggregate)
 	
 	*replace fy2016sapr with patient year value
-		gen fy2016sapr_py = (fy2015apr+fy2016sapr)/2
+		gen fy2016sapr_py = (fy2016sapr + (2*fy2015apr) +fy2016sapr)/4
 		drop fy2015apr fy2016sapr
 		rename fy2016sapr_py fy2016sapr
 		
@@ -77,7 +74,7 @@ Notes:
 		save "$output\temp_fbcts.dta", replace
 
 		
-** Remove fy2015apr from further datasets **
+** Remove fy2015apr and sapr from further datasets **
 	use "$output\temp_setup", clear
-	drop fy2015apr
+	drop fy2015*
 	save "$output\temp_setup", replace
