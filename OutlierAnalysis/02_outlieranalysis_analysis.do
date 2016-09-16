@@ -11,7 +11,7 @@
 		if !_rc log close
 			
 *define set of countries to analyze (must match .dta file names)
-	foreach ctry in Tanzania{
+	foreach ctry in Malawi{
 	
 	// OUTLIER ANALYSIS //
 

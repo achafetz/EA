@@ -4,7 +4,7 @@
 **   Purpose: Initialize folder structure and global file paths
 **   Adapted from Tim Essam, USAID
 **   Date: Jan 31, 2016
-**   Updated: March 22, 2016
+**   Updated: 9/16/16
 
 ** SET DIRECTORIES **
 
@@ -14,12 +14,12 @@
 *  must be run each time Stata is opened
 	/* Choose the project path location to where you want the project parent 
 	   folder to go on your machine. Make sure it ends with a forward slash */
-	global projectpath "C:\Users\achafetz\Documents\GitHub\"
+	global projectpath "C:\Users\achafetz\Documents\GitHub\EA\"
 	cd "$projectpath"
 	
 * Run a macro to set up study folder
 	* Name the file path below
-	local pFolder EA
+	local pFolder OutlierAnalysis
 	foreach dir in `pFolder' {
 		confirmdir "`dir'"
 		if `r(confirmdir)'==170 {
