@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import EA data & run outlier analysis
 **   Date: August 24, 2016
-**   Updated: 8/29
+**   Updated: 9/16/16
 
 /* NOTES
 	- Data source: 2012-2015 Nigeria SAS Output 01FEB16 [PEPFAR.net]
@@ -42,7 +42,7 @@
 
 	*clean up dataset
 		keep if rptgcycle==2015
-		drop if data_type=="De-dup"
+		drop if data_type=="De-dup" | national_sub_unit=="National"
 		keep mech_hq_id yr_agency_promisid_snu rptgcycle national_sub_unit ///
 			national_sub_sub_unit mech_partner mech_name mech_promis_id ///
 			art_ue art_py pw_test_ue pw_test pw_care_ue pw_care inf_test_ue ///
