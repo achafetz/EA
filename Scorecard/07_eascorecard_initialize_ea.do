@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import EA data & run outlier analysis
 **   Date: August 24, 2016
-**   Updated: 9/16/16
+**   Updated: 9/23/16
 
 /* NOTES
 	- Data source: 2012-2015 Nigeria SAS Output 01FEB16 [PEPFAR.net]
@@ -108,13 +108,13 @@
 		restore // restore the EA data
 		merge m:1 type using "`temp_cw'", nogen //merge in crosswalk table
 	*cleanup for merging
-		drop yr_agency_promisid_snu-mech_name national_sub_sub_unit mech_promis_id ben
-		order exp_ind, before(ue)
+		drop yr_agency_promisid_snu-mech_name national_sub_sub_unit mech_promis_id
+		order exp_ind, after(national_sub_unit)
 		rename national_sub_unit snu1
 		rename mech_hq_id mechanismid
 		replace snu1="FCT" if snu1=="Abuja Federal Capital Territory"
 	*rename ea variables
-		foreach v of varlist ue-outlier{
+		foreach v of varlist ben-outlier{
 			rename `v' fy2015apr_ea_`v'
 		}
 		*end

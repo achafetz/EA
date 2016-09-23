@@ -5,6 +5,11 @@
 *.dta
 *.txt
 
+#documents and other files
+*.pdf
+*.zip
+*.docx
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

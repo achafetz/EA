@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: genereate SAPR Unit Expenditures
 **   Date: August 29, 2016
-**   Updated:8/31/16
+**   Updated:9/23/16
 
 
 *open
@@ -22,7 +22,7 @@
 		lab var wa_ue "Weighted Avg UE"
 	bysort exp_ind: gen wa_ue_ol = wa_ue * `ol' // UE outlier threshold (high)
 	*by exp_ind: gen wa_ue_ol_low = wa_ue / `ol' // UE outlier threshold (low; not manditory)
-	by exp_ind: gen outlier = 0 //identify outliers
+	gen outlier = 0 if ue!=. //identify outliers
 		replace outlier = 1 if ue>wa_ue_ol & ue!=.
 		lab var outlier "Outlier (`ol'x Weighted Avg UE)"
 		*replace outlier = 1 if ue<wa_ue_ol_low //can remove; not manditory
@@ -35,14 +35,14 @@
 		}
 		*end
 *reorder 
-	order fy2015apr_ea_exp fy2015apr_ea_ue fy2015apr_ea_wa_ue ///
+	order fy2015apr_ea_ben fy2015apr_ea_exp fy2015apr_ea_ue fy2015apr_ea_wa_ue ///
 		fy2015apr_ea_outlier fy2016_targets fy2016sapr fy2016sapr_ea_exp ///
 		fy2016sapr_ea_ue fy2016sapr_ea_wa_ue fy2016sapr_ea_outlier, last
 *save 
 	save "$output\NigeriaSAPRdataEA.dta", replace
 
 *export
-	export delimited using "$excel\NigeriaSAPRdataEA", replace 
+	export delimited using "$excel\NigeriaSAPRdataEA", replace nolabel
 
 *remove temporary files
 	fs "$output\temp*.dta"
