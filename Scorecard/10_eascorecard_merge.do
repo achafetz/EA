@@ -32,25 +32,35 @@
 	append using "$output\temp_pmtct_wom_tst.dta" "$output\temp_htc.dta" ///
 		"$output\temp_htc_pos.dta" "$output\temp_oth_ind.dta"
 *clean up - remove unnecessary variables
-	drop countryname psnu psnuuid disaggregate age otherdisaggregate ///
+	drop countryname disaggregate age otherdisaggregate ///
 		resultstatus indicator
 *aggregate DSD/TA & PSNU
 	*EA does not differentiate between DSD and TA
 	*expenditure data not down to PSNU level --> no prioritizations
 	*also removes extra variables - countryname psnu psnuuid disaggregate age otherdisaggregate resultstatus indicator
 	collapse (sum) fy2016_targets fy2016sapr, by(operatingunit snu1 ///
-		primepartner fundingagency mechanismid implementingmechanismname ///
-		exp_ind)
+		psnu psnuuid primepartner fundingagency mechanismid ///
+		implementingmechanismname exp_ind)
 
 *merge with EA 2015 data
-	merge 1:1 mechanismid snu1 exp_ind using "$output\temp_eadata.dta"
+	*in Kenya, have to resolve TBD partner for merging
+	egen id = group(mechanismid psnu exp_ind)
+	sort id
+	gen match = 1 if id[_n-1]==id
+	by id: egen matchb = max(match)
+	replace primepartner = "Population Services International" if matchb==1
+	drop id match*
+	collapse (sum) fy2016_targets fy2016sapr, by(operatingunit snu1 ///
+		psnu psnuuid primepartner fundingagency mechanismid ///
+		implementingmechanismname exp_ind)
+	merge 1:1 mechanismid psnu exp_ind using "$output\temp_eadata.dta"
 	*check 
 	tab _merge if  _merge!=3
-	tab _merge if !inlist(snu1, "Kebbi", "Kwara",	"Niger",	"Zamfara",	"National") & _merge!=3 & primepartner!="Dedup" & fy2016_targets!=0 & fy2016sapr!=0 //non matching SNUs
+	*tab _merge if !inlist(snu1, "Kebbi", "Kwara",	"Niger",	"Zamfara",	"National") & _merge!=3 & primepartner!="Dedup" & fy2016_targets!=0 & fy2016sapr!=0 //non matching SNUs in Nigeria
 	drop if primepartner=="Dedup"
 	drop _merge
 *merge with EA Pilot SAPR data
-	merge 1:1 mechanismid snu1 exp_ind using "$output\temp_eadata_sapr.dta"
+	merge 1:1 mechanismid psnu exp_ind using "$output\temp_eadata_sapr.dta"
 	drop _merge
 *save
 	save "$output\temp_merge.dta", replace

@@ -4,7 +4,7 @@
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with FBCTS Program Area
 **   Date: August 25, 2016
-**   Updated: 9/14/16
+**   Updated: 10/17/16
 
 
 /*
@@ -66,7 +66,7 @@ Notes:
 		rename valuesapr fy2016sapr
 		rename valuetargets fy2016_targets
 		order fy2016_targets fy2016sapr, last
-		order indicator, before(indicatortype)
+		order indicator, after(exp_ind)
 		drop if fy2016_targets==. & fy2016sapr==.
 		keep if exp_ind!="."
 		

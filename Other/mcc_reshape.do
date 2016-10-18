@@ -106,4 +106,6 @@
 	reshape long fbcts_ cbcts_ pmtct_ vmmc_ htc_ pep_ bs_ ic_ lab_ ovc_ ///
 		sorpg_ sorpo_ sorpi_ sorpc_ sorpm_ mmt_, i(id) j(progarea, string) 
 
-
+	
+	reshape long @_ue @_ben, i(rptgcycle mech_agency mech_hq_id national_sub_unit data_type) j(progarea, string)
+	drop if inlist(_ben, .,0) & inlist(_ue, .,0)

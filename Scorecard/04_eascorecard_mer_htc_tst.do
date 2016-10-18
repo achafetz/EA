@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with HTC_TST Program Area
 **   Date: August 25, 2016
-**   Updated: 8/31/16
+**   Updated: 10/17/16
 
 
 /*
@@ -27,7 +27,7 @@ MER 2.0
 			(indicator=="VMMC_CIRC" & disaggregate=="HIVStatus" & resultstatus!="Unknown")
 			
 	*aggregate VMMC results together --> no VMMC in Nigeria
-		*collapse (sum) fy2016_targets (sum) fy2016sapr, by(operatingunit-disaggregate)
+		collapse (sum) fy2016_targets fy2016sapr, by(operatingunit-exp_ind)
 	
 	*reshape long
 		gen id = _n //need a unique id for reshape
@@ -37,7 +37,6 @@ MER 2.0
 		drop id
 	
 	*reshape wide
-		drop disaggregate resultstatus
 		egen id = group(type psnuuid mechanismid primepartner)
 		reshape wide value, i(id) j(indicator, string)
 		
@@ -46,7 +45,7 @@ MER 2.0
 		recode `r(varlist)' (.=0)	
 		capture confirm variable valueVMMC_CIRC //if VMMC doesn't exist, remove it from equation
 			if !_rc{
-				gen valueHTC_TST_EA = valueHTC_TST - (valuePMTCT_STAT + valueVMMC_CIRC + valuePMTC_STAT)
+				gen valueHTC_TST_EA = valueHTC_TST - (valuePMTCT_STAT + valueVMMC_CIRC + valuePMTCT_STAT)
 				}
 			else{
 				gen valueHTC_TST_EA = valueHTC_TST - (valuePMTCT_STAT + valuePMTCT_STAT) //no VMMC in equation
@@ -70,7 +69,7 @@ MER 2.0
 		rename valuesapr fy2016sapr
 		rename valuetargets fy2016_targets
 		order fy2016_targets fy2016sapr, last
-		order indicator, before(indicatortype)
+		order indicator, after(exp_ind)
 		drop if fy2016_targets==. & fy2016sapr==.
 		keep if exp_ind!="."
 		

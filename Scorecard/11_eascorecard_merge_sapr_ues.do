@@ -39,10 +39,10 @@
 		fy2015apr_ea_outlier fy2016_targets fy2016sapr fy2016sapr_ea_exp ///
 		fy2016sapr_ea_ue fy2016sapr_ea_wa_ue fy2016sapr_ea_outlier, last
 *save 
-	save "$output\NigeriaSAPRdataEA.dta", replace
+	save "$output\KenyaSAPRdataEA.dta", replace
 
 *export
-	export delimited using "$excel\NigeriaSAPRdataEA", replace nolabel
+	export delimited using "$excel\KenyaSAPRdataEA", replace nolabel
 
 *remove temporary files
 	fs "$output\temp*.dta"

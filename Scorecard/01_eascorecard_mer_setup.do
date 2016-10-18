@@ -3,10 +3,10 @@
 **   Aaron Chafetz
 **   Purpose: Initialize data structure
 **   Date: August 24, 2016
-**   Updated: 9/14/16
+**   Updated: 10/17/16
 
 /* NOTES
-	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160822 [Data Hub]
+	- Data source: ICPIFactView - SNU by IM Level_db-frozen_20160909 [Data Hub]
 	- Report aggregates DSD and TA
 	
 	EA Needed to create Variable to Create (8/31, A.Chen)
@@ -41,12 +41,12 @@
 				use "$output\ICPIFactView_SNUbyIM.dta", clear
 			}
 			else{
-				import delimited "$data\PSNU_IM_20160822.txt", clear
+				import delimited "$data\ICPI_Fact_view_PSNU_IM_20160909.txt", clear
 				save "$output\ICPIFactView_SNUbyIM.dta", replace
 			}
 
-	*create dataset for just Niergia
-		keep if operatingunit=="Nigeria"
+	*create dataset for just Kenya
+		keep if operatingunit=="Kenya"
 		
 	*replace missing SNU prioritizatoins
 		replace snuprioritization="[not classified]" if snuprioritization==""
@@ -62,6 +62,8 @@
 		drop ïregion regionuid operatingunituid mechanismuid typemilitary ///
 			numeratordenom categoryoptioncomboname sex ///
 			coarsedisaggregate fy*q*
+	*collapse DSD/TA
+		collapse (sum) fy*, by(operatingunit-indicator disaggregate-otherdisaggregate)
 	*create a variable for EA expenditure indicator names
 		gen str9 exp_ind = "."
 			lab var exp_ind "EA Expenditure Indicators"

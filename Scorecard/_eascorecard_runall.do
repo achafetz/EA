@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: run through all do files
 **   Date: August 31, 2016
-**   Updated:
+**   Updated: 10/18/16
 
 *** RUN ALL DO FILES FOR EA SCORECARD ***
 
@@ -28,7 +28,7 @@
 		run 06_eascorecard_mer_oth
 		
 ** EA **
-	*07 import EA data & run outlier analysis
+	*07 import FY15 EA data & run outlier analysis
 		run 07_eascorecard_initialize_ea
 	*08 import pilot EA FY16 SAPR data
 		run 08_eascorecard_ea_sapr

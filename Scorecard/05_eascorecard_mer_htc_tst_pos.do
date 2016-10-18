@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: calculate indicator associated with HTC_TST_POS Program Area
 **   Date: August 25, 2016
-**   Updated: 8/31/16
+**   Updated: 10/17/16
 
 /*
 | EA Program Area            | Expenditure indicators | SI Indicators                                                                                                                                                       |
@@ -65,7 +65,7 @@ MER 2.0
 		rename valuesapr fy2016sapr
 		rename valuetargets fy2016_targets
 		order fy2016_targets fy2016sapr, last
-		order indicator, before(indicatortype)
+		order indicator, after(exp_ind)
 		drop if fy2016_targets==. & fy2016sapr==.
 		keep if exp_ind!="."
 		

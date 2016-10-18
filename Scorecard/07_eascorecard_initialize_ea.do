@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import EA data & run outlier analysis
 **   Date: August 24, 2016
-**   Updated: 9/23/16
+**   Updated: 10/18/16
 
 /* NOTES
 	- Data source: 2012-2015 Nigeria SAS Output 01FEB16 [PEPFAR.net]
@@ -31,13 +31,13 @@
 *SETUP
 
 	*import data
-		capture confirm file "$output\nigeria_ea.dta"
+		capture confirm file "$output\kenya_ea.dta"
 			if !_rc{
-				use "$output\nigeria_ea.dta", clear
+				use "$output\kenya_ea.dta", clear
 			}
 			else{
-				import delimited "$data\2012-2015 Nigeria SAS Output 01FEB16.csv", clear
-				save "$output\nigeria_ea.dta", replace
+				import delimited "$data\2012-2015 Kenya SAS Output 02FEB16.csv", clear
+				save "$output\kenya_ea.dta", replace
 			}
 
 	*clean up dataset
@@ -102,6 +102,7 @@
 			"sorpc" "KP_FSW"
 			"sorpi" "KP_PWID"
 			"sorpm" "KP_MSMTG"
+			"vmmc" "VMMC"
 			end
 		tempfile temp_cw //create a temporary file for saving the crosswalk table
 		save "`temp_cw'"
@@ -110,9 +111,10 @@
 	*cleanup for merging
 		drop yr_agency_promisid_snu-mech_name national_sub_sub_unit mech_promis_id
 		order exp_ind, after(national_sub_unit)
-		rename national_sub_unit snu1
+		*rename national_sub_unit snu1 //Nigeria
+			*replace snu1="FCT" if snu1=="Abuja Federal Capital Territory"
+		rename national_sub_unit psnu //Kenya 
 		rename mech_hq_id mechanismid
-		replace snu1="FCT" if snu1=="Abuja Federal Capital Territory"
 	*rename ea variables
 		foreach v of varlist ben-outlier{
 			rename `v' fy2015apr_ea_`v'

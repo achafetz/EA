@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Import pilot EA SAPR data
 **   Date: August 29, 2016
-**   Updated:
+**   Updated: 10/18/16
 
 /* NOTES
 	- Data source: USAID EA SPR Scorecard Draft Aug 18 2016 [EATAP, Nigeria]
@@ -31,14 +31,13 @@
 *SETUP
 
 	*import/use data
-		capture confirm file "$output\nigeria_ea_sapr.dta"
+		capture confirm file "$output\kenya_ea_sapr.dta"
 			if !_rc{
-				use "$output\nigeria_ea_sapr.dta", clear
+				use "$output\kenya_ea_sapr.dta", clear
 			}
 			else{
-
-				import delimited "$data\EANigeriaPilotData.csv", clear
-				save "$output\nigeria_ea_sapr.dta", replace
+				import delimited "$data\EAKenyaPilotData.csv", clear
+				save "$output\kenya_ea_sapr.dta", replace
 			}
 	*give variables common stub for reshaping
 		foreach x of varlist fbcts - kpmsmtg {
@@ -47,14 +46,29 @@
 		*end
 		
 	*drop totals (last line)
-		drop if snustate=="" & mechanismid==.
-		rename snustate snu1
+		*Nigeria
+		*rename snustate snu1
+		*drop if snu1=="" & mechanismid==.
+		*Kenya
+		drop ip //will get mechanism name when merging
+		rename snu psnu
+		replace psnu = "Elgeyo Marakwet" if psnu == "Elgeyo-Marakwet"
+		replace psnu = "Trans Nzoia" if psnu== "Trans-Nzoia"
+		
 		
 	*reshape long
-		reshape long ind_, i(snu1 psnulga mechanismid) j(sapr_pa, string)
+		*reshape long ind_, i(snu1 psnulga mechanismid) j(sapr_pa, string) //Nigeria
+		reshape long ind_, i(psnu mechanismid) j(sapr_pa, string)
 	
-	*destring values	
-		destring ind_, gen(fy2016sapr_ea_exp)
+	*destring if ind_ contains string values & drop missing values
+		capture confirm string variable ind_  
+			if !_rc{
+				destring ind_, gen(fy2016sapr_ea_exp)
+			}
+			else{
+				gen fy2016sapr_ea_exp = ind_
+			}
+		
 		drop ind_
 		drop if inlist(fy2016sapr_ea_exp, ., 0)
 		
@@ -79,12 +93,16 @@
 		tempfile temp_cw //create a temporary file for saving the crosswalk table
 		save "`temp_cw'"
 		restore // restore the EA data
-		merge m:1 sapr_pa using "`temp_cw'", nogen //merge in crosswalk table
+		merge m:1 sapr_pa using "`temp_cw'", nogen keep(match master) //merge in crosswalk table
 	*clean up
 		drop if inlist(fy2016sapr_ea_exp, ., 0)
 		drop sapr_pa
 		drop if exp_ind=="n/a"
-		collapse (sum) fy2016sapr_ea_exp, by(snu1 mechanismid exp_ind)
-		replace snu1 = trim(snu1) //extra spaces in some snu names
+		*Nigeria
+		*collapse (sum) fy2016sapr_ea_exp, by(snu1 mechanismid exp_ind)
+		*replace snu1 = trim(snu1) //extra spaces in some snu names
+		*Kenya
+		collapse (sum) fy2016sapr_ea_exp, by(psnu mechanismid exp_ind)
+		replace psnu = trim(psnu) //extra spaces in some snu names
 	*save
 		save "$output\temp_eadata_sapr.dta", replace	

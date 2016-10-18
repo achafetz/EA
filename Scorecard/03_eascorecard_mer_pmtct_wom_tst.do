@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: calcuate indicator associated with PMTCT Women Tested Program Area
 **   Date: August 25, 2016
-**   Updated: 
+**   Updated: 10/17/16
 
 
 /*
@@ -57,7 +57,7 @@
 		rename valuesapr fy2016sapr
 		rename valuetargets fy2016_targets
 		order fy2016_targets fy2016sapr, last
-		order indicator, before(indicatortype)
+		order indicator, after(exp_ind)
 		drop if fy2016_targets==. & fy2016sapr==.
 		replace disaggregate="Known/New" if disaggregate=="KnownNew"
 		replace disaggregate="Total Numerator" if disaggregate=="Total"
