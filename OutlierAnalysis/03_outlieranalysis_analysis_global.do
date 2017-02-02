@@ -2,7 +2,7 @@
 **   COP FY16
 **   Aaron Chafetz
 **   Purpose: identify UE outliers by program area, globally
-**   Date: Sept 16, 2016
+**   Date: Feb 1, 2017
 **   Updated: 
 
 
@@ -10,7 +10,7 @@
 	
 	*unzip file
 		cd "$data"
-		unzipfile "2015 SAS Output allcntry 8.26.16.zip", replace
+		unzipfile "2014-2016 allcntry SAS Output 24JAN17", replace
 		cd "$projectpath"
 
 	*import data
@@ -19,12 +19,14 @@
 				use "$output\allctry_ea.dta", clear
 			}
 			else{
-				import delimited "$data\2015 SAS Output allcntry 8.26.16.csv", clear
+				import delimited "$data\2014-2016 allcntry SAS Output 24JAN17.csv", clear
 				save "$output\allctry_ea.dta", replace
 			}
 
 	*clean up dataset to only rows/columns needed
-		keep if rptgcycle==2015
+		keep if rptgcycle==2016
+		replace data_type="De-dup" if data_type=="De-Dup"
+		replace data_type="Direct" if data_type=="DIRECT"
 		drop if data_type=="De-dup" | national_sub_unit=="National"
 		keep ou mech_agency mech_hq_id yr_agency_promisid_snu rptgcycle national_sub_unit ///
 			national_sub_sub_unit mech_partner mech_name mech_promis_id ///	
@@ -56,9 +58,9 @@
 			rename `v' `v'_ben
 			}
 			*end
-	
+
 	*reshape
-		reshape long @_ben @_ue, i(yr_agency_promisid_snu) j(type, string) 
+		reshape long @_ben @_ue, i(ou yr_agency_promisid_snu) j(type, string) 
 		rename _ben ben
 			lab var ben "Beneficiaries"
 		rename _ue ue
@@ -81,27 +83,25 @@
 		bysort id_ou_type: egen tot_ben = total(ben) // total beneficiaries in prog area
 		bysort id_ou_type: gen wa_ue = tot_exp/tot_ben // weighted average UE
 			lab var wa_ue "Weighted Avg UE"
-		bysort id_ou_type: gen wa_ue_ol = wa_ue * `ol' // UE outlier threshold (high)
+		bysort id_ou_type: gen wa_ue_ol = wa_ue * `ol' // UE outlier threshold (high) 
 		bysort id_ou_type: gen outlier = 0 //identify outliers
 			replace outlier = 1 if ue>wa_ue_ol & ue!=.
 			lab var outlier "Outlier (`ol'x Weighted Avg UE)"
 			lab def yn 0 "No" 1 "Yes"
 			lab val outlier yn
-		drop tot* wa_ue_ol id_ou_type yr_agency_promisid_snu mech_promis_id //only needed to create outlier
+		drop tot* id_ou_type yr_agency_promisid_snu mech_promis_id //only needed to create outlier
 
 *REPORT
-	*clean up agency names
-		split mech_agency, parse("(" ")")
-		replace mech_agency2 = "PC" if mech_agency1 == "U.S. Peace Corps"
-		drop mech_agency mech_agency1
-		rename mech_agency2 agency
+	*rename agency
+		rename mech_agency agency
 	*make program area names all upper case
 		replace type = upper(type)
 	*reorder
 		order rptgcycle ou agency mech_hq_id mech_partner mech_name ///
 			national_sub_unit national_sub_sub_unit
+	
 	*export data
-		export excel using "$excel/global_ol_analysis_ea15.xlsx", ///
+		export excel using "$excel/global_ol_analysis_ea16.xlsx", ///
 			firstrow(variables) sheet("Data") sheetreplace nolabel
 	
 
