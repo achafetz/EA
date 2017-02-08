@@ -3,7 +3,7 @@
 **   Aaron Chafetz
 **   Purpose: Create site counts for each EA UE program area for IM TBB Tool
 **   Date: Feb 6, 2017
-**   Updated: 
+**   Updated: 2/8/17
 
 *import data
 	global fvdata "C:\Users\achafetz\Documents\ICPI\Data\All Site Dataset 20161230_Q4v2_1\"
@@ -28,7 +28,9 @@
 	gen pwtest_fy17_cnt = 1 if indicator=="PMTCT_STAT" & disaggregate=="Total Numerator" & !inlist(fy2017_targets,.,0)
 	gen inftest_fy16_cnt = 1 if indicator=="PMTCT_EID" & disaggregate=="Total Numerator" & !inlist(fy2016apr,.,0)
 	gen inftest_fy17_cnt = 1 if indicator=="PMTCT_EID" & disaggregate=="InfantTest" & !inlist(fy2017_targets,.,0)
-
+	gen ppprev_fy16_cnt = 1 if indicator=="PP_PREV" & disaggregate=="Total Numerator" & !inlist(fy2016apr,.,0)
+	gen ppprev_fy17_cnt = 1 if indicator=="PP_PREV" & disaggregate=="Total Numerator" & !inlist(fy2017_targets,.,0)
+	
 *aggreaget up to site/IM/type level
 	collapse (max) *_cnt, by(orgunituid mechanismid indicatortype) fast
 
@@ -44,7 +46,7 @@
 	reshape wide `r(varlist)', i(mechanismid) j(indicatortype, string)
 	
 *
-	foreach x in circ adltart chldart ovc htc pwtest inftest{
+	foreach x in circ adltart chldart ovc htc pwtest inftest ppprev{
 		egen `x'_fy16sitecount = rowtotal(`x'_fy16_cntDSD `x'_fy16_cntTA)
 		foreach t in DSD TA{
 			clonevar `x'_`t'_fy17sitecount = `x'_fy17_cnt`t'
